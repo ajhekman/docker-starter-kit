@@ -1,0 +1,18 @@
+version: '3.7'
+# https://docs.docker.com/compose/compose-file/
+# volumes:
+#   bulk-storage: {}
+
+
+services:
+  app:
+    # PID 1 has special meaning. Use init to reap zombie processes (introduced in v3.7)
+    init: true
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ".:/app"
+      - "bulk-storage:/data"
