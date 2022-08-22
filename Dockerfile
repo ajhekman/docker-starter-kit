@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 # Set language. Some packages depend on this.
 ENV LANG C.UTF-8
@@ -39,17 +39,22 @@ RUN apt-get install -y \
       less \
       nano \
       tmux \
-      iproute2
-
+      iproute2 \
+      execline \
+      s6
 
 RUN gem install bundler
 
 # Set the working directory to /app
 WORKDIR $APP_DIR
 
+# Copy in s6
+# You would place the root directory at the root of your application
+COPY root /
 
 COPY entrypoint.sh entrypoint.sh
 
 # Use array notation for ENTRYPOINT and CMD
-ENTRYPOINT [ "./entrypoint.sh" ]
+# This would start up s6 and then s6 would run entrypoint.sh as a supervised process
+ENTRYPOINT [ "/usr/bin/s6-svscan", "/etc/s6" ]
 CMD ["./your-application", "--serve"]
